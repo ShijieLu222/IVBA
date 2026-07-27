@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import { colors, type } from "../../theme";
-import { PrimaryButton } from "../buttons";
+import { colors, radii, spacing, type } from "../../theme";
+import { SecondaryButton } from "../buttons";
 import { AppIcon, type IconName } from "../icons";
 
 type EmptyStateProps = {
@@ -22,31 +22,43 @@ export function EmptyState({
   return (
     <View style={styles.empty}>
       <View style={styles.emptyIcon}>
-        <AppIcon name={icon} size={32} />
+        <AppIcon name={icon} size={20} color={colors.muted} />
       </View>
-      <Text style={type.h2}>{title}</Text>
+      <Text style={type.h3}>{title}</Text>
       <Text style={styles.emptyBody}>{body}</Text>
-      <PrimaryButton label={action} onPress={onAction} tone="yellow" />
+      <View style={styles.action}>
+        <SecondaryButton label={action} onPress={onAction} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   empty: {
-    margin: 20,
-    paddingVertical: 48,
-    alignItems: "stretch",
-    gap: 14,
-    borderTopWidth: 2,
-    borderBottomWidth: 2,
-    borderColor: colors.ink,
+    marginTop: spacing.md,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.lg,
+    alignItems: "center",
+    gap: spacing.sm,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    borderRadius: radii.xs,
+    backgroundColor: colors.white,
   },
   emptyIcon: {
-    width: 56,
-    height: 56,
-    backgroundColor: colors.yellow,
+    width: 40,
+    height: 40,
+    marginBottom: spacing.xs,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: radii.pill,
+    backgroundColor: colors.soft,
   },
-  emptyBody: { ...type.body, color: colors.muted, maxWidth: 320 },
+  emptyBody: {
+    ...type.meta,
+    color: colors.muted,
+    textAlign: "center",
+    maxWidth: 280,
+  },
+  action: { marginTop: spacing.md, alignSelf: "stretch" },
 });

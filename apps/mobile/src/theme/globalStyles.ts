@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 import { colors } from "./colors";
-import { spacing } from "./spacing";
+import { radii, spacing } from "./spacing";
 import { type } from "./typography";
 
 /** Shared layout primitives used across screens and components. */
@@ -14,21 +14,33 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: colors.paper,
   },
   screenPadding: {
-    paddingHorizontal: spacing.lg - 4,
+    paddingHorizontal: spacing.gutter,
   },
+  /** Default separator: present enough to divide, quiet enough to ignore. */
   hairline: {
-    borderBottomWidth: 1,
-    borderColor: colors.line,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
   },
   rule: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  /** Reserved for the few places that need a deliberate structural edge. */
+  inkRule: {
     borderTopWidth: 1,
     borderColor: colors.ink,
   },
+  surface: {
+    backgroundColor: colors.white,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    borderRadius: radii.xs,
+  },
   pressed: {
-    opacity: 0.7,
+    opacity: 0.6,
   },
   disabled: {
-    opacity: 0.45,
+    opacity: 0.4,
   },
   touchTarget: {
     minWidth: 44,
@@ -37,15 +49,16 @@ export const globalStyles = StyleSheet.create({
     justifyContent: "center",
   },
   eyebrow: {
+    ...type.kicker,
     color: colors.pink,
     textTransform: "uppercase",
-    fontSize: 13,
-    letterSpacing: 1.2,
-    fontWeight: "800",
-    marginBottom: 5,
   },
   mutedBody: {
     ...type.body,
+    color: colors.muted,
+  },
+  metaText: {
+    ...type.meta,
     color: colors.muted,
   },
 });

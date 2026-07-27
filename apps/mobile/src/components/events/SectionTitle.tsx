@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { colors, type } from "../../theme";
+import { colors, spacing, type } from "../../theme";
+import { globalStyles } from "../../theme/globalStyles";
 
 type SectionTitleProps = {
   title: string;
@@ -13,8 +14,15 @@ export function SectionTitle({ title, action, onAction }: SectionTitleProps) {
     <View style={styles.sectionTitle}>
       <Text style={type.h2}>{title}</Text>
       {action ? (
-        <Pressable onPress={onAction}>
-          <Text style={styles.actionText}>{action}  →</Text>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onAction}
+          style={({ pressed }) => [
+            styles.action,
+            pressed && globalStyles.pressed,
+          ]}
+        >
+          <Text style={styles.actionText}>{action}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -23,13 +31,14 @@ export function SectionTitle({ title, action, onAction }: SectionTitleProps) {
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    marginHorizontal: 20,
-    marginTop: 28,
-    marginBottom: 8,
+    marginHorizontal: spacing.gutter,
+    marginTop: spacing.section,
+    marginBottom: spacing.sm,
     flexDirection: "row",
     alignItems: "baseline",
     justifyContent: "space-between",
-    gap: 12,
+    gap: spacing.md,
   },
-  actionText: { color: colors.pink, fontSize: 14, fontWeight: "800" },
+  action: { minHeight: 28, justifyContent: "center" },
+  actionText: { ...type.label, color: colors.pink },
 });

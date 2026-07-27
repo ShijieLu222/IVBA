@@ -1,9 +1,8 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { EventItem } from "../../data";
-import { colors } from "../../theme";
+import { colors, radii, spacing, type } from "../../theme";
 import { globalStyles } from "../../theme/globalStyles";
-import { AppIcon } from "../icons";
 
 type EventRowProps = {
   event: EventItem;
@@ -13,6 +12,7 @@ type EventRowProps = {
 export function EventRow({ event, onPress }: EventRowProps) {
   return (
     <Pressable
+      accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [styles.eventRow, pressed && globalStyles.pressed]}
     >
@@ -22,56 +22,42 @@ export function EventRow({ event, onPress }: EventRowProps) {
         <Text style={styles.eventTitle} numberOfLines={2}>
           {event.title}
         </Text>
-        <Text style={styles.eventMeta}>{event.venue}</Text>
+        <Text style={styles.eventMeta} numberOfLines={1}>
+          {event.venue}
+        </Text>
         <Text style={styles.eventMeta}>
           {event.date.replace(" 2026", "")} · {event.time}
         </Text>
       </View>
-      <View style={styles.eventAside}>
-        <Text style={styles.eventPrice}>{event.price}</Text>
-        <AppIcon name="chevron-forward" color={colors.pink} />
-      </View>
+      <Text style={styles.eventPrice}>{event.price}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   eventRow: {
-    minHeight: 132,
-    marginHorizontal: 20,
-    paddingVertical: 14,
+    marginHorizontal: spacing.gutter,
+    paddingVertical: spacing.md + 2,
     flexDirection: "row",
-    gap: 13,
-    borderBottomWidth: 1,
-    borderColor: colors.line,
+    alignItems: "center",
+    gap: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
   },
-  eventThumb: { width: 94, height: 100, backgroundColor: colors.soft },
-  eventCopy: { flex: 1, justifyContent: "center" },
-  eventCategory: {
-    color: colors.pink,
-    fontSize: 11,
-    lineHeight: 15,
-    fontWeight: "900",
-    letterSpacing: 0.7,
+  eventThumb: {
+    width: 76,
+    height: 76,
+    borderRadius: radii.xs,
+    backgroundColor: colors.soft,
   },
-  eventTitle: { fontSize: 16, lineHeight: 19, fontWeight: "800", marginTop: 3 },
-  eventMeta: {
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.muted,
-    marginTop: 3,
-  },
-  eventAside: {
-    width: 62,
-    alignItems: "flex-end",
-    justifyContent: "flex-end",
-    paddingBottom: 4,
-  },
+  eventCopy: { flex: 1, gap: 3 },
+  eventCategory: { ...type.kicker, color: colors.pink },
+  eventTitle: { ...type.h3 },
+  eventMeta: { ...type.meta, fontSize: 12.5, color: colors.muted },
   eventPrice: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: "700",
-    marginBottom: 12,
+    ...type.label,
+    alignSelf: "flex-start",
+    paddingTop: 2,
     textAlign: "right",
   },
 });

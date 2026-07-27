@@ -1,7 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 
-import { colors } from "../../theme";
+import { colors, spacing, type } from "../../theme";
+import { globalStyles } from "../../theme/globalStyles";
 import { AppIcon } from "../icons";
 import { BrandLockup } from "../layout";
 
@@ -18,55 +19,47 @@ export function HostHeader({
 
   return (
     <View style={styles.header}>
-      <View>
+      <View style={styles.top}>
         <BrandLockup compact />
-        <Text style={styles.role}>VENUE HOST · {subtitle.toUpperCase()}</Text>
-        <Text style={styles.title}>{title}</Text>
+        <Pressable
+          accessibilityLabel="Host notifications"
+          onPress={() => router.push("/host-notifications")}
+          style={globalStyles.touchTarget}
+        >
+          <AppIcon name="notifications-outline" size={21} />
+          <View style={styles.dot} />
+        </Pressable>
       </View>
-      <Pressable
-        onPress={() => router.push("/host-notifications")}
-        style={styles.notification}
-      >
-        <AppIcon name="notifications-outline" size={24} />
-        <View style={styles.dot} />
-      </Pressable>
+      <Text style={styles.role}>VENUE HOST · {subtitle.toUpperCase()}</Text>
+      <Text style={type.h1}>{title}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    minHeight: 146,
-    paddingHorizontal: 18,
-    paddingTop: 14,
-    paddingBottom: 16,
-    backgroundColor: colors.yellow,
-    borderBottomWidth: 2,
-    borderColor: colors.ink,
+    paddingHorizontal: spacing.gutter,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.paper,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  top: {
+    marginLeft: -4,
+    marginBottom: spacing.md,
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
   },
-  role: {
-    marginTop: 7,
-    color: colors.pink,
-    fontSize: 10,
-    letterSpacing: 0.9,
-    fontWeight: "900",
-  },
-  title: { marginTop: 2, fontSize: 27, lineHeight: 31, fontWeight: "900" },
-  notification: {
-    width: 44,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  role: { ...type.kicker, color: colors.pink, marginBottom: spacing.xs },
   dot: {
     position: "absolute",
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: colors.pink,
-    right: 6,
-    top: 5,
+    right: 9,
+    top: 10,
   },
 });

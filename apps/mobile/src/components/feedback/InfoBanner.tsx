@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import { colors } from "../../theme";
+import { colors, radii, spacing, type } from "../../theme";
 import { AppIcon, type IconName } from "../icons";
 
 type InfoBannerProps = {
@@ -10,23 +10,26 @@ type InfoBannerProps = {
   tone?: "yellow" | "pink" | "soft";
 };
 
+/** Brand colour reads as a tint plus an accent edge rather than a solid block. */
+const tones = {
+  yellow: { backgroundColor: colors.yellowWash, accent: colors.yellow },
+  pink: { backgroundColor: colors.pinkWash, accent: colors.pink },
+  soft: { backgroundColor: colors.soft, accent: colors.border },
+} as const;
+
 export function InfoBanner({
   icon,
   title,
   body,
   tone = "yellow",
 }: InfoBannerProps) {
-  const backgroundColor =
-    tone === "yellow"
-      ? colors.yellow
-      : tone === "pink"
-        ? "#FCE8F0"
-        : colors.soft;
+  const { backgroundColor, accent } = tones[tone];
 
   return (
     <View style={[styles.infoBanner, { backgroundColor }]}>
-      <AppIcon name={icon} />
-      <View style={{ flex: 1 }}>
+      <View style={[styles.accent, { backgroundColor: accent }]} />
+      <AppIcon name={icon} size={18} color={colors.ink} />
+      <View style={styles.copy}>
         <Text style={styles.infoTitle}>{title}</Text>
         <Text style={styles.infoBody}>{body}</Text>
       </View>
@@ -36,13 +39,17 @@ export function InfoBanner({
 
 const styles = StyleSheet.create({
   infoBanner: {
-    marginHorizontal: 20,
-    padding: 16,
+    marginHorizontal: spacing.gutter,
+    paddingVertical: spacing.md,
+    paddingLeft: spacing.md + 3,
+    paddingRight: spacing.md,
     flexDirection: "row",
-    gap: 12,
-    borderWidth: 1,
-    borderColor: colors.ink,
+    gap: spacing.md - 2,
+    borderRadius: radii.xs,
+    overflow: "hidden",
   },
-  infoTitle: { fontSize: 15, lineHeight: 20, fontWeight: "800" },
-  infoBody: { fontSize: 13, lineHeight: 18, marginTop: 2 },
+  accent: { position: "absolute", left: 0, top: 0, bottom: 0, width: 3 },
+  copy: { flex: 1, gap: 2 },
+  infoTitle: { ...type.h3, fontSize: 14 },
+  infoBody: { ...type.meta, color: colors.muted },
 });

@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { colors, type } from "../../theme";
+import { colors, spacing, type } from "../../theme";
 import { AppIcon, type IconName } from "../icons";
 
 type MetaRowProps = PropsWithChildren<{
@@ -12,7 +12,7 @@ type MetaRowProps = PropsWithChildren<{
 export function MetaRow({ icon, children, pink = false }: MetaRowProps) {
   return (
     <View style={styles.metaRow}>
-      <AppIcon name={icon} size={19} color={pink ? colors.pink : colors.ink} />
+      <AppIcon name={icon} size={16} color={pink ? colors.pink : colors.muted} />
       <Text style={styles.metaText}>{children}</Text>
     </View>
   );
@@ -20,10 +20,10 @@ export function MetaRow({ icon, children, pink = false }: MetaRowProps) {
 
 const styles = StyleSheet.create({
   metaRow: {
-    minHeight: 30,
+    minHeight: 26,
     flexDirection: "row",
     alignItems: "center",
-    gap: 9,
+    gap: spacing.sm + 2,
   },
-  metaText: { ...type.body, flex: 1 },
+  metaText: { ...type.body, fontSize: 14, flex: 1 },
 });

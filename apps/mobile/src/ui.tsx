@@ -6,6 +6,7 @@ export {
   AppIcon,
   BrandHeader,
   BrandLockup,
+  Divider,
   EmptyState,
   EventRow,
   InfoBanner,
@@ -14,6 +15,8 @@ export {
   PrimaryButton,
   Screen,
   SecondaryButton,
+  Section,
   SectionTitle,
+  Tag,
   type IconName,
 } from "./components";

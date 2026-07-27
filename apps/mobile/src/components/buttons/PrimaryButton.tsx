@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { colors } from "../../theme";
+import { colors, radii, spacing } from "../../theme";
 import { globalStyles } from "../../theme/globalStyles";
 import { AppIcon, type IconName } from "../icons";
 
@@ -10,16 +10,17 @@ type PrimaryButtonProps = {
   icon?: IconName;
   tone?: "pink" | "yellow" | "black";
   disabled?: boolean;
+  /** Off-centre labels are only used inside dense rows next to a price. */
   centered?: boolean;
 };
 
 export function PrimaryButton({
   label,
   onPress,
-  icon = "arrow-forward",
+  icon,
   tone = "pink",
   disabled = false,
-  centered = false,
+  centered = true,
 }: PrimaryButtonProps) {
   const backgroundColor =
     tone === "yellow"
@@ -31,43 +32,43 @@ export function PrimaryButton({
 
   return (
     <Pressable
+      accessibilityRole="button"
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
         styles.primaryButton,
         { backgroundColor },
+        centered && styles.centered,
         pressed && globalStyles.pressed,
         disabled && globalStyles.disabled,
       ]}
     >
-      <Text
-        style={[
-          styles.primaryButtonText,
-          { color },
-          centered && styles.primaryButtonTextCentered,
-        ]}
-      >
-        {label}
-      </Text>
-      <View style={centered ? styles.primaryButtonIconCentered : undefined}>
-        <AppIcon name={icon} size={22} color={color} />
-      </View>
+      <Text style={[styles.primaryButtonText, { color }]}>{label}</Text>
+      {icon ? (
+        <View style={centered ? styles.iconCentered : undefined}>
+          <AppIcon name={icon} size={18} color={color} />
+        </View>
+      ) : null}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   primaryButton: {
-    minHeight: 52,
-    paddingHorizontal: 18,
+    minHeight: 50,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.xs,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
-    borderWidth: 1,
-    borderColor: colors.ink,
+    gap: spacing.sm,
   },
-  primaryButtonText: { fontSize: 17, fontWeight: "800" },
-  primaryButtonTextCentered: { width: "100%", textAlign: "center" },
-  primaryButtonIconCentered: { position: "absolute", right: 18 },
+  centered: { justifyContent: "center" },
+  primaryButtonText: {
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: "600",
+    letterSpacing: 0.1,
+  },
+  iconCentered: { position: "absolute", right: spacing.lg },
 });

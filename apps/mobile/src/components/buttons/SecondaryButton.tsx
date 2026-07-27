@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 
-import { colors } from "../../theme";
+import { colors, radii, spacing } from "../../theme";
 import { globalStyles } from "../../theme/globalStyles";
 import { AppIcon, type IconName } from "../icons";
 
@@ -17,14 +17,15 @@ export function SecondaryButton({
 }: SecondaryButtonProps) {
   return (
     <Pressable
+      accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [
         styles.secondaryButton,
         pressed && globalStyles.pressed,
       ]}
     >
+      {icon ? <AppIcon name={icon} size={17} /> : null}
       <Text style={styles.secondaryButtonText}>{label}</Text>
-      {icon ? <AppIcon name={icon} size={20} /> : null}
     </Pressable>
   );
 }
@@ -32,18 +33,20 @@ export function SecondaryButton({
 const styles = StyleSheet.create({
   secondaryButton: {
     minHeight: 50,
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    borderWidth: 1.5,
-    borderColor: colors.ink,
-    backgroundColor: colors.paper,
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.xs,
+    backgroundColor: colors.white,
   },
   secondaryButtonText: {
     color: colors.ink,
-    fontSize: 16,
-    fontWeight: "800",
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: "600",
   },
 });

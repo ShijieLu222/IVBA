@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 
-import { colors, type } from "../../theme";
+import { colors, spacing, type } from "../../theme";
 import { globalStyles } from "../../theme/globalStyles";
 import { AppIcon } from "../icons";
 import { BrandLockup } from "./BrandLockup";
@@ -27,10 +27,11 @@ export function PageHeader({
       <View style={styles.pageHeaderTop}>
         {back ? (
           <Pressable
+            accessibilityLabel="Go back"
             onPress={() => router.back()}
-            style={globalStyles.touchTarget}
+            style={[globalStyles.touchTarget, styles.back]}
           >
-            <AppIcon name="arrow-back" />
+            <AppIcon name="arrow-back" size={21} />
           </Pressable>
         ) : (
           <BrandLockup compact />
@@ -38,21 +39,27 @@ export function PageHeader({
         {right ?? <View style={{ width: 44 }} />}
       </View>
       {eyebrow ? <Text style={globalStyles.eyebrow}>{eyebrow}</Text> : null}
-      <Text style={type.h1}>{title}</Text>
+      <Text style={[type.h1, eyebrow ? styles.titleWithEyebrow : null]}>
+        {title}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   pageHeader: {
-    paddingHorizontal: 20,
-    paddingBottom: 18,
+    paddingHorizontal: spacing.gutter,
+    paddingBottom: spacing.lg,
     backgroundColor: colors.paper,
   },
   pageHeaderTop: {
-    minHeight: 64,
+    minHeight: 56,
+    marginLeft: -10,
+    marginBottom: spacing.sm,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
+  back: { alignItems: "flex-start" },
+  titleWithEyebrow: { marginTop: spacing.xs },
 });
