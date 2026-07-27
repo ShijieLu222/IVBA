@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 34,
     height: 34,
-    borderRadius: radii.pill,
+    borderRadius: radii.xs,
     backgroundColor: colors.soft,
     alignItems: "center",
     justifyContent: "center",

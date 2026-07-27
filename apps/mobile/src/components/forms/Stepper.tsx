@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
-    borderRadius: radii.pill,
+    borderRadius: radii.xs,
     backgroundColor: colors.white,
   },
   stepButton: {

@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: radii.pill,
+    borderRadius: radii.xs,
     backgroundColor: colors.soft,
   },
   emptyBody: {

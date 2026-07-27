@@ -52,8 +52,10 @@ pnpm --filter @ivba/mobile ios
 ## Important source files
 
 - `apps/mobile/app/` — Expo Router screens and routes
-- `apps/mobile/src/ui.tsx` — shared UI components and icon rendering
-- `apps/mobile/src/theme.ts` — colour and typography tokens
+- `apps/mobile/src/components/` — shared components by area (layout, buttons, forms,
+  events, feedback, host, common primitives); `src/ui.tsx` re-exports them
+- `apps/mobile/src/theme/` — colour, type scale, spacing and global style tokens
+  (`src/theme.ts` is a compatibility re-export)
 - `apps/mobile/src/auth.ts` — static role detection and demo accounts
 - `apps/mobile/src/host-data.ts` — Venue Host mock data
 - `apps/mobile/src/host-ui.tsx` — shared Host components

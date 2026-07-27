@@ -11,7 +11,10 @@ export const spacing = {
   section: 34,
 } as const;
 
-/** Square-ish by contract; a hint of radius keeps surfaces from feeling raw. */
+/**
+ * Corners stay square by design contract; `xs`/`sm` only soften raw edges.
+ * `pill` is reserved for avatars and status dots, never for buttons or chips.
+ */
 export const radii = {
   none: 0,
   xs: 2,

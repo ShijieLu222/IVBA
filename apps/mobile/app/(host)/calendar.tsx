@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     height: 34,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: radii.pill,
+    borderRadius: radii.xs,
   },
   dayPartial: { backgroundColor: colors.yellowWash },
   daySelected: { backgroundColor: colors.pink },

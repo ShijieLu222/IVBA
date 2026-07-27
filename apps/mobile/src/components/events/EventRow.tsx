@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   eventThumb: {
-    width: 76,
-    height: 76,
+    width: 92,
+    height: 69,
     borderRadius: radii.xs,
     backgroundColor: colors.soft,
   },

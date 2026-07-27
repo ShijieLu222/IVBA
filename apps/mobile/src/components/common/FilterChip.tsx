@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
-    borderRadius: radii.pill,
+    borderRadius: radii.xs,
     backgroundColor: colors.white,
   },
   chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },

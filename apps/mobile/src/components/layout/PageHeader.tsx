@@ -36,7 +36,7 @@ export function PageHeader({
         ) : (
           <BrandLockup compact />
         )}
-        {right ?? <View style={{ width: 44 }} />}
+        <View style={styles.rightSlot}>{right}</View>
       </View>
       {eyebrow ? <Text style={globalStyles.eyebrow}>{eyebrow}</Text> : null}
       <Text style={[type.h1, eyebrow ? styles.titleWithEyebrow : null]}>
@@ -61,5 +61,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   back: { alignItems: "flex-start" },
+  rightSlot: { minWidth: 44, alignItems: "flex-end", justifyContent: "center" },
   titleWithEyebrow: { marginTop: spacing.xs },
 });
