@@ -1,0 +1,24 @@
+{
+  "name": "@ivba/api-client",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "openapi-typescript ../../openapi/openapi.yaml -o ./src/generated/schema.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo \"no lint yet\"",
+    "test": "echo \"no tests yet\""
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.8.0",
+    "typescript": "^5.8.3"
+  }
+}
