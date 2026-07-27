@@ -40,8 +40,16 @@ make api         # Go API on :8080
 
 # another terminal
 pnpm dev:web     # http://localhost:3000
-pnpm dev:mobile  # Expo
+pnpm --filter @ivba/mobile web   # Expo Web preview http://localhost:8081
+pnpm dev:mobile                  # Expo Go / simulator
 ```
+
+Mobile demo accounts (static prototype):
+
+- Visitor: `visitor@example.com` / `bristol2026`
+- Venue Host: `host@artspace.uk` / `bristol2026`
+
+Design handoff: [docs/design/AI_AGENT_HANDOFF.md](docs/design/AI_AGENT_HANDOFF.md)
 
 常用命令：
 
