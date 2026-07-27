@@ -2,7 +2,14 @@ import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
 import { events } from "../../src/data";
-import { AppIcon, BrandHeader, EventRow, Screen, SectionTitle } from "../../src/ui";
+import {
+  AppIcon,
+  BrandHeader,
+  EventRow,
+  FilterChip,
+  Screen,
+  SectionTitle,
+} from "../../src/ui";
 import { colors, radii, spacing, type } from "../../src/theme";
 
 const categories = ["All", "Today", "Free", "Dance", "Music", "Visual arts"];
@@ -56,20 +63,14 @@ export default function SearchScreen() {
       </View>
 
       <View style={styles.chips}>
-        {categories.map((category) => {
-          const isActive = active === category;
-          return (
-            <Pressable
-              key={category}
-              onPress={() => setActive(category)}
-              style={[styles.chip, isActive && styles.chipActive]}
-            >
-              <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
-                {category}
-              </Text>
-            </Pressable>
-          );
-        })}
+        {categories.map((category) => (
+          <FilterChip
+            key={category}
+            label={category}
+            active={active === category}
+            onPress={() => setActive(category)}
+          />
+        ))}
       </View>
 
       <SectionTitle title={`${filtered.length} events`} action="Map" />
@@ -130,19 +131,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: spacing.sm,
   },
-  chip: {
-    minHeight: 34,
-    paddingHorizontal: spacing.md,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
-    borderRadius: radii.pill,
-    backgroundColor: colors.white,
-  },
-  chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },
-  chipText: { ...type.label, color: colors.muted },
-  chipTextActive: { color: colors.white },
   noResults: {
     marginHorizontal: spacing.gutter,
     marginTop: spacing.lg,

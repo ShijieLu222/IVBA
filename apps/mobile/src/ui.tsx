@@ -10,6 +10,7 @@ export {
   Divider,
   EmptyState,
   EventRow,
+  FilterChip,
   InfoBanner,
   MetaRow,
   PageHeader,

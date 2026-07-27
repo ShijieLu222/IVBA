@@ -2,13 +2,123 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { spaces, venue } from "../../src/host-data";
 import { HostHeader } from "../../src/host-ui";
-import { AppIcon, Screen, SectionTitle } from "../../src/ui";
-import { colors, type } from "../../src/theme";
+import { AppIcon, Screen, SectionTitle, Tag } from "../../src/ui";
+import { colors, radii, spacing, type } from "../../src/theme";
+import { globalStyles } from "../../src/theme/globalStyles";
 
-export default function VenueScreen() { const router = useRouter(); return <Screen><HostHeader title="Venue & spaces" />
-  <View style={styles.venue}><View style={styles.venueTop}><View><Text style={styles.kicker}>PUBLISHED VENUE</Text><Text style={type.h2}>{venue.name}</Text></View><View style={styles.live}><View style={styles.liveDot} /><Text style={styles.liveText}>LIVE</Text></View></View><Text style={styles.address}>{venue.address}</Text><View style={styles.meta}><Text style={styles.metaText}>{spaces.length} hireable spaces</Text><Text style={styles.metaText}>·</Text><Text style={styles.metaText}>Profile 92% complete</Text></View></View>
-  <SectionTitle title="Hireable spaces" />
-  {spaces.map((space) => <Pressable key={space.id} onPress={() => router.push(`/host-space/${space.id}`)} style={({ pressed }) => [styles.space, pressed && { opacity: 0.7 }]}><Image source={space.image} style={styles.image} /><View style={styles.copy}><Text style={type.h3}>{space.name}</Text><Text style={styles.summary} numberOfLines={2}>{space.summary}</Text><View style={styles.facts}><Text style={styles.fact}>{space.area}</Text><Text style={styles.fact}>Up to {space.standing}</Text></View><View style={styles.bottom}><Text style={styles.price}>{space.price}</Text><AppIcon name="chevron-forward" color={colors.pink} /></View></View></Pressable>)}
-  <Pressable style={styles.add}><AppIcon name="add" /><Text style={styles.addText}>Add another space</Text></Pressable>
-  </Screen>; }
-const styles = StyleSheet.create({ venue: { margin: 20, padding: 17, backgroundColor: colors.yellow, borderWidth: 2, borderColor: colors.ink }, venueTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }, kicker: { color: colors.pink, fontSize: 10, fontWeight: "900", letterSpacing: 1 }, live: { flexDirection: "row", gap: 5, alignItems: "center", padding: 6, backgroundColor: colors.white, borderWidth: 1 }, liveDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.success }, liveText: { fontSize: 9, fontWeight: "900" }, address: { marginTop: 8, color: colors.muted, fontSize: 13 }, meta: { marginTop: 12, flexDirection: "row", gap: 7 }, metaText: { fontSize: 11, fontWeight: "700" }, space: { marginHorizontal: 20, paddingVertical: 16, flexDirection: "row", gap: 14, borderBottomWidth: 1, borderColor: colors.ink }, image: { width: 112, height: 124, backgroundColor: colors.soft }, copy: { flex: 1 }, summary: { marginTop: 5, color: colors.muted, fontSize: 12, lineHeight: 17 }, facts: { marginTop: 9, flexDirection: "row", gap: 6, flexWrap: "wrap" }, fact: { paddingHorizontal: 7, paddingVertical: 4, backgroundColor: colors.soft, fontSize: 10, fontWeight: "800" }, bottom: { marginTop: "auto", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }, price: { flex: 1, fontSize: 11, fontWeight: "800" }, add: { margin: 20, minHeight: 52, flexDirection: "row", gap: 9, alignItems: "center", justifyContent: "center", borderWidth: 1.5, borderStyle: "dashed", borderColor: colors.ink }, addText: { fontSize: 15, fontWeight: "800" } });
+export default function VenueScreen() {
+  const router = useRouter();
+
+  return (
+    <Screen>
+      <HostHeader title="Venue & spaces" />
+
+      <View style={styles.venue}>
+        <View style={styles.venueTop}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.kicker}>PUBLISHED VENUE</Text>
+            <Text style={type.h2}>{venue.name}</Text>
+          </View>
+          <View style={styles.live}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>LIVE</Text>
+          </View>
+        </View>
+        <Text style={styles.address}>{venue.address}</Text>
+        <Text style={styles.venueMeta}>
+          {spaces.length} hireable spaces · Profile 92% complete
+        </Text>
+      </View>
+
+      <SectionTitle title="Hireable spaces" />
+      {spaces.map((space) => (
+        <Pressable
+          key={space.id}
+          onPress={() => router.push(`/host-space/${space.id}`)}
+          style={({ pressed }) => [styles.space, pressed && globalStyles.pressed]}
+        >
+          <Image source={space.image} style={styles.image} />
+          <View style={styles.copy}>
+            <Text style={type.h3}>{space.name}</Text>
+            <Text style={styles.summary} numberOfLines={2}>
+              {space.summary}
+            </Text>
+            <View style={styles.facts}>
+              <Tag label={space.area} />
+              <Tag label={`Up to ${space.standing}`} />
+            </View>
+            <Text style={styles.price}>{space.price}</Text>
+          </View>
+        </Pressable>
+      ))}
+
+      <Pressable style={styles.add}>
+        <AppIcon name="add" size={17} color={colors.muted} />
+        <Text style={styles.addText}>Add another space</Text>
+      </Pressable>
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  venue: {
+    marginHorizontal: spacing.gutter,
+    marginTop: spacing.lg,
+    paddingBottom: spacing.lg,
+    gap: spacing.xs + 2,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  venueTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: spacing.sm,
+  },
+  kicker: { ...type.kicker, color: colors.pink, marginBottom: 2 },
+  live: {
+    flexDirection: "row",
+    gap: spacing.xs + 1,
+    alignItems: "center",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radii.xs,
+    backgroundColor: "#E7F4EC",
+  },
+  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.success },
+  liveText: { ...type.kicker, fontSize: 9.5, color: colors.success },
+  address: { ...type.meta, color: colors.muted },
+  venueMeta: { ...type.meta, fontSize: 12, color: colors.muted },
+  space: {
+    marginHorizontal: spacing.gutter,
+    paddingVertical: spacing.md + 2,
+    flexDirection: "row",
+    gap: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  image: {
+    width: 92,
+    height: 92,
+    borderRadius: radii.xs,
+    backgroundColor: colors.soft,
+  },
+  copy: { flex: 1, gap: spacing.xs + 1 },
+  summary: { ...type.meta, fontSize: 12.5, color: colors.muted },
+  facts: { flexDirection: "row", gap: spacing.xs + 2, flexWrap: "wrap" },
+  price: { ...type.label, marginTop: 2 },
+  add: {
+    marginHorizontal: spacing.gutter,
+    marginTop: spacing.lg,
+    minHeight: 50,
+    flexDirection: "row",
+    gap: spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: colors.border,
+    borderRadius: radii.xs,
+  },
+  addText: { ...type.label, color: colors.muted },
+});
