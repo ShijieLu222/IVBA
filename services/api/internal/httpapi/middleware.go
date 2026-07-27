@@ -1,0 +1,37 @@
+package httpapi
+
+import (
+	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"net/http"
+)
+
+type ctxKey string
+
+const requestIDKey ctxKey = "request_id"
+
+func WithRequestID(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id := r.Header.Get("X-Request-ID")
+		if id == "" {
+			id = newRequestID()
+		}
+		w.Header().Set("X-Request-ID", id)
+		ctx := context.WithValue(r.Context(), requestIDKey, id)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func RequestIDFromContext(ctx context.Context) string {
+	if v, ok := ctx.Value(requestIDKey).(string); ok {
+		return v
+	}
+	return ""
+}
+
+func newRequestID() string {
+	var b [8]byte
+	_, _ = rand.Read(b[:])
+	return hex.EncodeToString(b[:])
+}
