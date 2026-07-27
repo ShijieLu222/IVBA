@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: ivba-db
+    restart: unless-stopped
+    ports:
+      # Host 5433 avoids clashing with a local Homebrew/Postgres.app on 5432.
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ivba
+    volumes:
+      - ivba_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ivba"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  ivba_pg_data:

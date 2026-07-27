@@ -1,0 +1,19 @@
+{
+  "name": "ivba",
+  "private": true,
+  "packageManager": "pnpm@10.26.2",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:web": "turbo run dev --filter=@ivba/web",
+    "dev:mobile": "turbo run start --filter=@ivba/mobile",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "generate": "pnpm --filter @ivba/api-client generate"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.7",
+    "typescript": "^5.8.3"
+  }
+}

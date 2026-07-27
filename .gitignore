@@ -8,6 +8,12 @@ dist/
 build/
 .expo/
 .turbo/
+*.tsbuildinfo
+
+# Go
+services/api/bin/
+*.exe
+*.test
 
 # Local environment and secrets
 .env
@@ -19,4 +25,13 @@ build/
 coverage/
 playwright-report/
 test-results/
+
+# IDE / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Expo
+apps/mobile/ios/
+apps/mobile/android/
 
