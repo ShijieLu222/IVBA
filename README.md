@@ -7,17 +7,63 @@ Independent Venue Booking Platform（暂称 IVBA）是一个服务英国独立�
 - 普通用户发现本地活动、购票和管理订单；
 - Artspace Lifespace 负责审核、运营和数据分析。
 
-本仓库是旧大学项目的重新启动版本。旧代码没有迁入；产品边界与技术架构已重新设计。
+## 一句话架构
+
+Monorepo：`apps/web`（Next.js）+ `apps/mobile`（Expo/React Native）+ `services/api`（Go）+ `openapi/` 契约；PostgreSQL/PostGIS 为业务事实来源。
+
+## 仓库结构
+
+```text
+apps/web                 Next.js website
+apps/mobile              Expo + Expo Router (React Native)
+packages/api-client      OpenAPI → TS + RTK Query base API
+packages/store           Shared Redux store setup
+packages/domain          Shared enums / domain constants
+packages/design-tokens   Shared design tokens
+services/api             Go API + worker + Goose migrations
+openapi/openapi.yaml     API contract source of truth
+docs/                    Product, ERD, knowledge notes
+```
+
+## 本地快速开始
+
+前置：Node 20、pnpm、Go 1.24+、Docker Desktop。
+
+```bash
+cp .env.example .env
+pnpm install
+
+make up          # Postgres/PostGIS
+make migrate     # M1 schema
+make seed        # optional demo rows
+make api         # Go API on :8080
+
+# another terminal
+pnpm dev:web     # http://localhost:3000
+pnpm dev:mobile  # Expo
+```
+
+常用命令：
+
+| 命令 | 作用 |
+| --- | --- |
+| `make up` / `make down` | 启停数据库 |
+| `make migrate` / `make seed` | 迁移 / 种子数据 |
+| `make api` / `make worker` | 跑 API / worker |
+| `make test-go` | Go 测试 |
+| `pnpm generate` | OpenAPI → TS schema |
+| `pnpm typecheck` / `pnpm build` | 类型检查 / 构建 |
+
+## 文档
+
+1. [知识点文件夹](docs/knowledge/README.md)
+2. [数据模型](docs/DATA_MODEL.md)
+3. [状态机](docs/STATE_MACHINES.md)
+4. [本机环境](docs/SETUP.md)
+5. [产品 / 需求 / 技术栈 / 路线图](docs/)
 
 ## 当前阶段
 
-当前处于产品定义与架构阶段，尚未开始生成应用代码。
+脚手架已就绪（Phase 1 骨架）。下一步是第一个业务切片：
 
-- [产品范围与核心业务](docs/PRODUCT_BRIEF.md)
-- [MVP 产品需求规格](docs/REQUIREMENTS.md)
-- [技术栈与架构决策](docs/TECH_STACK.md)
-- [实施路线图](docs/ROADMAP.md)
-
-## 一句话架构
-
-使用 monorepo 管理 Next.js 网站、Expo App 与 Go 模块化单体 API；以 OpenAPI 作为前后端契约并生成 RTK Query API slices；PostgreSQL/PostGIS 是业务事实来源，Stripe Connect 处理平台型支付。
+> 场地草稿 → 管理员审核 → 公开搜索 → 租用申请

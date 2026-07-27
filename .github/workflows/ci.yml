@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm generate
+      - name: OpenAPI generate drift check
+        run: |
+          if ! git diff --exit-code -- packages/api-client/src/generated; then
+            echo "Generated API client is out of date. Run pnpm generate."
+            exit 1
+          fi
+      - run: pnpm typecheck
+      - run: pnpm --filter @ivba/web lint
+      - run: pnpm --filter @ivba/web build
+
+  go:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ivba
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ivba"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: services/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+      - run: go test ./...
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/ivba?sslmode=disable
+        run: go run github.com/pressly/goose/v3/cmd/goose@v3.24.3 -dir db/migrations postgres "$DATABASE_URL" up
