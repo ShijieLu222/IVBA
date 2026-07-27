@@ -1,105 +1,198 @@
 # 技术栈与架构决策
 
-## 1. 推荐方案
+## 1. 已确认的方向
+
+- 后端：Go；
+- App：React Native、Expo、Expo Router；
+- 数据库：PostgreSQL/PostGIS；
+- 前端状态：Redux Toolkit + RTK Query API slices；
+- 接口：REST + OpenAPI；
+- 架构：模块化单体，首版不拆微服务。
+
+## 2. 推荐的完整技术栈
 
 | 层级 | 选择 | 用途 |
 | --- | --- | --- |
-| 仓库 | pnpm workspaces + Turborepo | 管理 Web、App 和共享包 |
-| Web | Next.js App Router + TypeScript | 公共 SEO 页面、全部管理后台、服务端业务接口 |
-| App | React Native + Expo + Expo Router | iOS/Android 普通用户体验 |
-| Web UI | Tailwind CSS + shadcn/ui | 可访问、易维护的响应式界面 |
-| App UI | NativeWind + 自有组件 | 原生导航与触控体验 |
-| 表单/校验 | React Hook Form + Zod | 前后端共享输入契约 |
-| 服务端状态 | TanStack Query | App 数据缓存、重试与失效管理 |
-| 数据库 | Supabase PostgreSQL + PostGIS | 交易、时段、库存、地理位置与报表 |
-| 身份认证 | Supabase Auth | 邮箱登录、OAuth、会话管理 |
-| 授权 | PostgreSQL Row Level Security + 服务端策略 | 用户、组织和管理员的数据隔离 |
-| 文件 | Supabase Storage | 场地图、活动图、组织资料 |
-| 后端逻辑 | Next.js Route Handlers/Server Actions + PostgreSQL functions | 支付、库存、审核和管理流程 |
-| 异步任务 | Supabase Cron/Queues 或托管工作流（按需求引入） | 过期锁单、邮件、webhook 重试 |
-| 支付 | Stripe Connect + Stripe Checkout/Payment Element | 平台支付、身份验证、退款与分账 |
-| 邮件 | Resend + React Email | 登录外的交易邮件与运营通知 |
-| 推送 | Expo Notifications | App 订单与活动提醒 |
-| 地图 | Mapbox 或 Google Maps（成本评估后确定） | 地址搜索、地图和距离筛选 |
-| 监控 | Sentry | Web/App 错误与性能监控 |
-| 产品分析 | PostHog（获得有效 consent 后） | 漏斗与功能使用分析 |
-| Web 部署 | Vercel | 预览环境与生产部署 |
-| App 构建 | EAS Build / Submit / Update | 原生构建、商店提交和安全 OTA 更新 |
-| CI | GitHub Actions | lint、typecheck、测试、迁移检查 |
-| 测试 | Vitest + Testing Library + Playwright + Maestro | 单元、组件、Web E2E、App E2E |
+| 仓库 | pnpm workspaces + Turborepo + Go modules | 管理 Web、App、共享 TS 包和 Go API |
+| Website | Next.js App Router + TypeScript | 公共 SEO 页面与全部管理后台 |
+| Mobile App | React Native + Expo + Expo Router | iOS/Android 活动发现、购票和票券 |
+| Web UI | Tailwind CSS + shadcn/ui | 响应式、可访问的 Web UI |
+| App UI | NativeWind + 自有 RN 组件 | 原生触控与跨平台样式 |
+| 前端状态 | Redux Toolkit + RTK Query | API cache、鉴权视图和跨页面状态 |
+| 表单 | React Hook Form | Web/App 表单状态与错误展示 |
+| API 契约 | OpenAPI 3.0 | 接口事实来源、文档与代码生成 |
+| Go HTTP | Go `net/http` ServeMux | REST API 和 middleware |
+| Go API 生成 | oapi-codegen strict server | 生成 Go 类型和 handler interface |
+| 数据访问 | pgx/v5 + sqlc | PostgreSQL driver 与类型安全 SQL |
+| 数据迁移 | Goose，仅 SQL migrations | 可审查、可回滚的 schema 版本 |
+| 数据库 | PostgreSQL + PostGIS | 事务、时段、库存、位置和报表 |
+| Authentication | 推荐 Supabase Auth | 邮箱/OAuth/MFA；Go 验证 JWT/JWKS |
+| Authorization | Go policy/service 层 + DB constraints | 用户、组织成员和管理员权限 |
+| 文件存储 | S3-compatible object storage | 图片/资料与 signed upload URL |
+| 支付 | Stripe Connect | 收款、平台费、退款、KYC 和分账 |
+| 邮件 | Resend | 交易邮件、邀请和状态通知 |
+| App 推送 | Expo Notifications | 订单、申请和活动提醒 |
+| 地图 | Mapbox 或 Google Maps，后续评估 | 地址输入与地图；PostGIS 负责距离查询 |
+| Go 日志 | `log/slog` JSON | 结构化 request/job 日志 |
+| 可观测性 | OpenTelemetry + Sentry | trace/metrics 和前后端错误监控 |
+| 产品分析 | PostHog，有效 consent 后启用 | 搜索、申请和购票漏斗 |
+| Web 部署 | Vercel | Next.js preview/production |
+| App 构建 | EAS Build / Submit / Update | 构建、商店发布和安全 OTA |
+| Go 部署 | Docker；托管商待预算确认 | API 与 worker 同镜像、不同 command |
+| CI | GitHub Actions | generate、lint、typecheck、test、migration |
+| 测试 | Go test、testcontainers-go、Jest/RNTL、Playwright、Maestro | 后端、组件与 E2E |
 
-版本号在真正 scaffold 时锁定，避免架构文档很快过期；依赖升级由 Renovate 或 Dependabot 管理。
+初始化时锁定当前受支持版本，使用 Renovate 或 Dependabot 管理升级。
 
-## 2. 为什么替换旧架构
+## 3. Website 不能只写“React Native + Expo”
 
-### Helix 图数据库 → PostgreSQL/PostGIS
+App 与 Website 的需求不同：
 
-这个产品的核心是订单、付款、时间段和有限库存，最需要的是事务、约束、锁和审计，而不是图遍历。PostgreSQL 更适合：
+- App 强调原生导航、推送、相机扫码、票券和触控；
+- 公共 Website 强调 SEO、分享预览、无障碍和首次加载；
+- 管理后台强调桌面表格、复杂表单、批量操作和键盘使用。
 
-- 防止同一空间在同一时段重复确认；
-- 防止高并发售票超卖；
-- 保证订单、付款和票券状态一致；
-- 使用 PostGIS 完成“距离我多远”等位置查询；
-- 用 SQL 直接完成运营报表。
+推荐结构是：
 
-好友图谱和推荐如果未来真的成为核心，可在 PostgreSQL 中先实现；不应为远期 stretch goal 提前引入图数据库。
+- `apps/mobile` 使用 Expo；
+- `apps/web` 使用 Next.js；
+- 两端共享 OpenAPI 生成的 RTK Query client、Redux 约定、领域枚举、设计 tokens 和纯工具；
+- 不强求共享所有 UI 组件。
 
-### Cognito + API Gateway + Lambda + CDK → Supabase + 少量服务端逻辑
+Expo Web 可用于原型或简单登录后页面，但不建议成为公开网站的唯一方案。当前 Expo Router SSR 仍处于 alpha，不应让核心公开页面依赖未稳定能力。未来稳定后再通过 ADR 评估。
 
-旧 AWS 组合本身可行，但对小团队的早期产品意味着多套配置、IAM、部署和本地模拟。Supabase 将 PostgreSQL、Auth、Storage 和行级权限放在同一平台，减少运维面。支付 webhook、管理员操作和跨表事务仍必须走可信服务端，不能把 service role key 放入客户端。
+## 4. Go 后端
 
-如果客户未来明确要求全 AWS、已有 AWS 运维团队或签署了相应企业合同，再考虑迁移到 RDS PostgreSQL、Cognito、S3、Lambda 和 EventBridge；领域模型与客户端契约保持可迁移。
+### 4.1 模块化单体
 
-### Redux → TanStack Query + 局部状态
+一个 API 服务和一个 worker，共享领域代码与数据库：
 
-旧项目把 API 数据放进 Redux slices。新版中：
+```text
+services/api/
+├── cmd/
+│   ├── api/                 # HTTP server
+│   └── worker/              # async jobs
+├── internal/
+│   ├── auth/
+│   ├── organizations/
+│   ├── venues/
+│   ├── hires/
+│   ├── events/
+│   ├── ticketing/
+│   ├── payments/
+│   ├── notifications/
+│   └── platformadmin/
+├── db/
+│   ├── migrations/
+│   ├── queries/
+│   └── generated/
+├── go.mod
+└── Dockerfile
+```
 
-- 服务端数据由 TanStack Query 管理；
-- 表单由 React Hook Form 管理；
-- 登录会话由 Auth SDK 管理；
-- 少量界面状态使用 React state；
-- 只有出现真正复杂的跨页面客户端状态时才引入 Zustand。
+模块分 transport、service/use-case 和 repository/query 边界，但不建立没有价值的抽象层。模块之间通过明确方法或领域事件调用，禁止任意跨模块改表。
 
-### Web 与 App 的共享边界
+### 4.2 HTTP 与 OpenAPI
 
-共享以下内容：
+- 使用标准库 `net/http` ServeMux，首版不引入 Gin/Fiber 等框架；
+- `openapi/openapi.yaml` 是接口唯一事实来源；
+- oapi-codegen 生成 Go 类型与 strict handler interface；
+- `@rtk-query/codegen-openapi` 生成 TypeScript API slice；
+- 一个 base API slice，通过 endpoint injection 按模块拆文件；
+- 错误统一为 `code`, `message`, `field_errors`, `request_id`；
+- API 从 `/v1` 开始；
+- 创建订单、支付和退款支持 idempotency key。
 
-- 领域类型和枚举；
-- Zod schemas；
-- 数据访问接口/API client；
-- 日期、金额和权限工具；
-- 设计 token 与品牌资源。
+生成代码提交进 Git，CI 重新生成并检查无差异，防止契约漂移。
 
-不强求共享 Web 和 React Native 的呈现组件。强行“一套 UI 跑所有端”通常会牺牲 SEO、可访问性或原生交互，并增加调试成本。
+### 4.3 PostgreSQL 访问与规则
 
-## 3. 建议仓库结构
+使用 pgx pool + sqlc，不采用全功能 ORM。预订和售票需要明确控制 transaction、row lock、isolation、PostGIS、range 与 exclusion constraint；SQL 比 ORM 更直接可审查。
+
+- 金额使用最小货币单位整数并存 `currency`；
+- 时间使用 `timestamptz`，场地另存 IANA timezone；
+- 经纬度使用 `geography(Point, 4326)`；
+- 已确认场地租用使用时间范围 + GiST exclusion constraint 防重叠；
+- 门票库存锁定与订单创建在同一事务中；
+- Stripe event ID 设唯一约束，确保 webhook 幂等；
+- 关键状态历史与管理员操作写 append-only 表。
+
+### 4.4 异步任务
+
+首版不引入 Kafka，也不因邮件而拆服务：
+
+- 业务事务同时写 transactional outbox；
+- Go worker 领取任务并处理重试；
+- 任务包含唯一 key、attempt、available_at 和最终失败状态；
+- 库存锁过期、webhook 后续处理、邮件和推送由 worker 执行；
+- 规模真正超过 PostgreSQL job queue 后，再评估专用队列。
+
+## 5. RTK Query API slices 规则
+
+继续使用 RTK Query 合理，但不要把所有状态都做成 Redux slice：
+
+- API 服务端数据：RTK Query；
+- token：Auth SDK + Expo SecureStore，不明文进入 Redux persist/AsyncStorage；
+- Redux 只保留最小 session view；
+- 表单：React Hook Form；
+- 短暂 UI 状态：component state；
+- 真正跨页面客户端状态：普通 Redux slice；
+- 不同时引入 TanStack Query、SWR 或 Zustand；
+- tag 按实体/列表设计，mutation 后精确 invalidation；
+- 持久化 cache 不能成为业务事实来源。
+
+## 6. Authentication 与 Authorization
+
+不自建密码系统：
+
+1. Expo/Next.js 向托管 Auth 登录；
+2. 客户端携带短期 access token 调用 Go API；
+3. Go 通过 issuer、audience 与 JWKS 验证 JWT；
+4. Go 从 `profiles`, `organizations`, `organization_members` 判断权限；
+5. 管理员、退款和发布审核二次授权并写审计日志。
+
+Auth provider 负责“你是谁”；Go 负责“你能对哪个组织的什么资源做什么”。不要把长期业务角色写进不能及时失效的 JWT。
+
+## 7. 仓库结构
 
 ```text
 .
 ├── apps/
-│   ├── web/                 # Next.js 公共站点 + dashboards + server routes
-│   └── mobile/              # Expo iOS/Android app
+│   ├── web/                     # Next.js
+│   └── mobile/                  # Expo
 ├── packages/
-│   ├── api-client/          # Typed client and query keys
-│   ├── domain/              # Zod schemas, enums, business types
-│   ├── config/              # Shared TypeScript/lint configuration
-│   ├── design-tokens/       # Colours, spacing, typography primitives
-│   └── test-utils/
-├── supabase/
-│   ├── migrations/          # Reviewed, versioned SQL migrations
-│   ├── seed.sql             # Local development fixtures
-│   └── functions/           # Only where an Edge Function is justified
+│   ├── api-client/              # generated RTK Query API
+│   ├── store/                   # shared Redux setup
+│   ├── domain/
+│   ├── design-tokens/
+│   └── config/
+├── services/
+│   └── api/                     # Go API + worker + migrations
+├── openapi/
+│   └── openapi.yaml
 ├── docs/
-│   ├── adr/                 # Architecture decision records
-│   ├── PRODUCT_BRIEF.md
-│   ├── TECH_STACK.md
-│   └── ROADMAP.md
-└── .github/workflows/
+│   └── adr/
+├── pnpm-workspace.yaml
+├── turbo.json
+└── Makefile
 ```
 
-## 4. 核心数据模型
+Turborepo 只管理 TypeScript workspaces；Go 由 Go toolchain 管理。根目录 Makefile 提供 `make dev/test/generate/migrate`，不引入 Bazel。
 
-首批实体应包括：
+## 8. 环境与部署
+
+至少设置 local、test、staging、production 四种环境：
+
+- local：Docker Compose Postgres/PostGIS + seed；
+- test：CI 临时 Postgres/PostGIS；
+- staging：独立 Auth、DB、storage、Stripe test mode；
+- production：独立账户/项目、备份、PITR、告警和最小权限。
+
+Go API 使用 non-root multi-stage Docker image；API/worker 同镜像不同 command；migration 是单次受控 release step；secrets 只进入部署平台 secret manager。API 与数据库选择相近的欧洲区域。
+
+具体 Go/数据库托管商需要结合客户预算、数据驻留、备份/PITR 与运维能力确定，不能只按开发偏好决定。
+
+## 9. 核心数据模型
 
 - `profiles`
 - `organizations`, `organization_members`
@@ -111,52 +204,64 @@
 - `tickets`, `ticket_scans`
 - `payments`, `refunds`, `payout_accounts`
 - `favorites`, `notification_preferences`
-- `audit_logs`
+- `outbox_jobs`, `webhook_events`, `audit_logs`
 
-所有金额使用最小货币单位整数（例如 pence）并存储货币代码；所有时间在数据库中使用 `timestamptz`，场地另存 IANA timezone；重要状态变化写入 append-only history/audit 表。
+场地租用与门票订单必须分开，不能共用一张含糊的 `bookings` 表。
 
-## 5. API 与安全边界
+## 10. 质量门槛
 
-- 公共读取可通过受 RLS 保护的 Supabase client；
-- 普通用户只能读写自己的订单、收藏和资料；
-- 组织数据通过 membership + role 策略授权；
-- 创建支付、确认库存、退款、核销和管理员操作只允许可信服务端执行；
-- Stripe webhook 是付款状态事实来源，处理必须幂等；
-- 票务库存锁定与下单必须在数据库事务中完成；
-- 图片上传使用有时效的 signed URL，并验证文件类型、大小和所有权；
-- 管理员操作、退款、审核和权限变更全部进入审计日志；
-- 生产、预览和本地环境使用独立数据库与密钥。
+每个 PR 至少运行：
 
-## 6. GDPR / UK 合规基线
+- OpenAPI/Go/RTK Query generate drift check；
+- Go format、vet/static analysis、unit tests；
+- 真实 Postgres/PostGIS container integration tests；
+- TypeScript typecheck、lint、component tests；
+- migrations 从空库执行与升级测试；
+- Web Playwright；
+- App Maestro（主干或发布构建）。
 
-- 项目启动时完成数据地图、保留期限和 DPIA 判断，不能等上线前补；
-- 默认最小化收集个人信息，participant 信息仅在活动确实需要时收集；
-- 营销 consent 与服务通知分开，记录 consent 版本和时间；
-- 提供数据导出、删除请求与账号停用流程；
-- 使用欧洲/英国可接受的数据区域，并与供应商签署/核对 DPA；
-- 分析、广告和非必要 cookie 在获得有效 consent 前不启用；
-- 日志与错误追踪不得记录支付卡、密码、token 或完整敏感表单；
-- 若服务可能被儿童访问，需要单独评估年龄适宜设计要求。
+支付、超卖、时段冲突、重复 webhook、越权和退款必须有后端集成测试。
 
-合规责任不能仅靠技术栈解决，Merchant of Record、退款、税务、保险、KYC 和平台责任必须由客户与法律/财务顾问确认。
+## 11. 暂不采用
 
-## 7. 暂不采用
+- Helix/Neo4j、GraphQL；
+- 微服务、Kubernetes、Kafka；
+- 重型 Go Web framework 或全功能 ORM；
+- 自建密码认证、自建支付表单；
+- Redis（真实瓶颈出现前）；
+- RTK Query 之外的 server-state library；
+- 强行共享 Web/RN 全部 UI；
+- 业务规则未确认前的自动重分配或推荐系统。
 
-- Helix/Neo4j 等图数据库；
-- 为 MVP 拆微服务；
-- GraphQL（当前领域没有抵消额外复杂度的需求）；
-- Kubernetes；
-- 自建认证或自建支付表单；
-- 同时使用多个全局状态库；
-- 让 App 与 Web 共享全部 UI 组件；
-- 在业务规则未确认前构建自动场地重分配或推荐系统。
+## 12. 仍需确定
 
-## 8. 需要在开发前验证的架构风险
+### 开发前必须确定
 
-1. Stripe Connect 的账户类型、charge 模式与 Merchant of Record 责任；
-2. Supabase 所选区域、DPA、备份/PITR 和客户的数据驻留要求；
-3. 场地可用性是规则型日历还是外部日历同步；
-4. 场地租用与票务退款是否需要平台审批；
-5. 首版票务容量是否按场次、票种、区域或座位管理；
-6. App Store 对实物/线下服务支付路径的当前政策确认。
+1. Website 使用独立 Next.js（推荐），还是接受 Expo Web 限制；
+2. Auth provider 与邮箱密码、magic link、Google/Apple、MFA 范围；
+3. PostgreSQL 托管商、区域、备份、PITR 和连接池；
+4. object storage、图片处理与 CDN；
+5. Stripe Connect 模式、Merchant of Record、费用、退款/拒付责任；
+6. 场地租用是即时确认还是 request/quote/accept；
+7. 票务按场次/票种，还是需要分区/选座；
+8. 地图/地址 provider 与 geocoding 数据使用权限；
+9. 首发地区、货币、税务、时区和语言；
+10. GDPR 保留、删除、营销 consent 与未成年人范围。
 
+### 上线前确定
+
+1. Go/数据库托管商及 staging/production 拓扑；
+2. 邮件域名、模板与退信处理；
+3. App push 深链和通知偏好；
+4. SLO、告警接收人和备份恢复演练；
+5. App Store/Play Store 账号、隐私标签和发布负责人；
+6. 审核、退款、封禁和客服权限矩阵。
+
+## 13. 下一项产物
+
+scaffold 前先完成：
+
+1. 系统上下文图与容器图；
+2. 核心 ERD；
+3. 场地申请与门票订单状态机；
+4. 首个 OpenAPI vertical slice：登录用户提交场地租用申请。
