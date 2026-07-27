@@ -1,6 +1,11 @@
 :root {
-  --ivba-ink: #1c1917;
-  --ivba-paper: #faf7f2;
-  --ivba-accent: #0f766e;
-  --ivba-muted: #78716c;
+  --ivba-yellow: #ffe800;
+  --ivba-pink: #db2f67;
+  --ivba-ink: #111111;
+  --ivba-paper: #fffdf8;
+  --ivba-muted: #6f6a64;
+  --ivba-line: #171717;
+  --ivba-soft: #f3efe8;
+  --ivba-teal: #18c9c1;
+  --ivba-accent: #db2f67;
 }

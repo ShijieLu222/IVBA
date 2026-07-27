@@ -1,0 +1,16 @@
+/** Artspace Lifespace brand palette — Living Programme mobile system */
+export const colors = {
+  yellow: "#FFE800",
+  pink: "#DB2F67",
+  ink: "#111111",
+  paper: "#FFFDF8",
+  white: "#FFFFFF",
+  muted: "#6F6A64",
+  line: "#171717",
+  soft: "#F3EFE8",
+  teal: "#18C9C1",
+  success: "#137B55",
+  danger: "#B42318",
+} as const;
+
+export type ColorName = keyof typeof colors;
