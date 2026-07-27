@@ -262,6 +262,6 @@ Go API 使用 non-root multi-stage Docker image；API/worker 同镜像不同 com
 scaffold 前先完成：
 
 1. 系统上下文图与容器图；
-2. 核心 ERD；
-3. 场地申请与门票订单状态机；
+2. 核心 ERD → 见 [DATA_MODEL.md](./DATA_MODEL.md)；
+3. 场地申请与门票订单状态机 → 见 [STATE_MACHINES.md](./STATE_MACHINES.md)；
 4. 首个 OpenAPI vertical slice：登录用户提交场地租用申请。
