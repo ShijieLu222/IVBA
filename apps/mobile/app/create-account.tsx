@@ -1,9 +1,70 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { AppIcon, PageHeader, PrimaryButton, Screen } from "../src/ui";
-import { colors, type } from "../src/theme";
+import {
+  Checkbox,
+  PageHeader,
+  PrimaryButton,
+  Screen,
+  TextField,
+} from "../src/ui";
+import { colors, spacing, type } from "../src/theme";
 
-export default function CreateAccountScreen() { const router = useRouter(); const [consent, setConsent] = useState(false); return <Screen><PageHeader title="Create your account" /><View style={styles.intro}><Text style={styles.body}>Save events, manage orders and keep your tickets available on your phone.</Text></View><View style={styles.form}><Field label="Full name" placeholder="Your name" /><Field label="Email" placeholder="you@example.com" /><Field label="Password" placeholder="At least 10 characters" secure /><Pressable onPress={() => setConsent(!consent)} style={styles.consent}><View style={[styles.check, consent && styles.checkActive]}>{consent ? <AppIcon name="checkmark" size={17} color={colors.white} /> : null}</View><Text style={styles.consentText}>Send me occasional arts news and local event inspiration. Optional and easy to turn off.</Text></Pressable><PrimaryButton label="Create account" onPress={() => router.replace("/(tabs)")} /><Text style={styles.terms}>By creating an account, you agree to the Terms and confirm you have read the Privacy Policy.</Text></View></Screen>; }
-function Field({ label, placeholder, secure = false }: { label: string; placeholder: string; secure?: boolean }) { return <View style={styles.field}><Text style={styles.label}>{label}</Text><TextInput placeholder={placeholder} placeholderTextColor={colors.muted} style={styles.input} secureTextEntry={secure} /></View>; }
-const styles = StyleSheet.create({ intro: { paddingHorizontal: 20 }, body: { ...type.body, color: colors.muted }, form: { padding: 20, gap: 16 }, field: { gap: 6 }, label: { fontSize: 13, fontWeight: "800" }, input: { height: 52, paddingHorizontal: 14, borderWidth: 1.5, borderColor: colors.ink, backgroundColor: colors.white, fontSize: 16 }, consent: { flexDirection: "row", alignItems: "flex-start", gap: 10 }, check: { width: 24, height: 24, borderWidth: 1.5, borderColor: colors.ink, alignItems: "center", justifyContent: "center" }, checkActive: { backgroundColor: colors.pink }, consentText: { flex: 1, fontSize: 13, lineHeight: 19 }, terms: { color: colors.muted, fontSize: 12, lineHeight: 18 } });
+export default function CreateAccountScreen() {
+  const router = useRouter();
+  const [consent, setConsent] = useState(false);
+
+  return (
+    <Screen>
+      <PageHeader title="Create your account" />
+
+      <View style={styles.intro}>
+        <Text style={styles.body}>
+          Save events, manage orders and keep your tickets available on your
+          phone.
+        </Text>
+      </View>
+
+      <View style={styles.form}>
+        <TextField label="Full name" placeholder="Your name" />
+        <TextField
+          label="Email"
+          placeholder="you@example.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextField
+          label="Password"
+          placeholder="At least 10 characters"
+          secure
+          autoCapitalize="none"
+          hint="Use a mix of words, numbers or symbols."
+        />
+        <Checkbox
+          checked={consent}
+          onToggle={() => setConsent(!consent)}
+          label="Send me occasional arts news and local event inspiration. Optional and easy to turn off."
+        />
+        <PrimaryButton
+          label="Create account"
+          onPress={() => router.replace("/(tabs)")}
+        />
+        <Text style={styles.terms}>
+          By creating an account, you agree to the Terms and confirm you have
+          read the Privacy Policy.
+        </Text>
+      </View>
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  intro: { paddingHorizontal: spacing.gutter },
+  body: { ...type.body, color: colors.muted },
+  form: {
+    paddingHorizontal: spacing.gutter,
+    paddingTop: spacing.lg,
+    gap: spacing.md + 2,
+  },
+  terms: { ...type.meta, fontSize: 12, color: colors.muted },
+});

@@ -1,3 +1,4 @@
+import { StyleSheet } from "react-native";
 import { Tabs } from "expo-router";
 import { colors } from "../../src/theme";
 import { AppIcon } from "../../src/ui";
@@ -12,17 +13,35 @@ const icons = {
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={({ route }) => ({
-      headerShown: false,
-      tabBarActiveTintColor: colors.pink,
-      tabBarInactiveTintColor: colors.ink,
-      tabBarStyle: { width: "100%", maxWidth: 430, alignSelf: "center", height: 78, paddingTop: 8, paddingBottom: 8, backgroundColor: colors.white, borderTopWidth: 1, borderTopColor: colors.ink, elevation: 0 },
-      tabBarLabelStyle: { fontSize: 11, lineHeight: 15, fontWeight: "700" },
-      tabBarIcon: ({ color, size, focused }) => {
-        const icon = icons[route.name as keyof typeof icons] ?? icons.index;
-        return <AppIcon name={icon} color={color} size={size + 2} />;
-      },
-    })}>
+    <Tabs
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: colors.pink,
+        tabBarInactiveTintColor: colors.muted,
+        tabBarStyle: {
+          width: "100%",
+          maxWidth: 430,
+          alignSelf: "center",
+          height: 68,
+          paddingTop: 8,
+          paddingBottom: 10,
+          backgroundColor: colors.paper,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: colors.border,
+          elevation: 0,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10.5,
+          lineHeight: 14,
+          fontWeight: "500",
+          letterSpacing: 0.1,
+        },
+        tabBarIcon: ({ color, size }) => {
+          const icon = icons[route.name as keyof typeof icons] ?? icons.index;
+          return <AppIcon name={icon} color={color} size={size - 2} />;
+        },
+      })}
+    >
       <Tabs.Screen name="index" options={{ title: "Discover" }} />
       <Tabs.Screen name="search" options={{ title: "Search" }} />
       <Tabs.Screen name="tickets" options={{ title: "Tickets" }} />

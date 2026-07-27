@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { AppIcon, BrandHeader, InfoBanner, Screen } from "../../src/ui";
-import { colors, type } from "../../src/theme";
+import { colors, radii, spacing, type } from "../../src/theme";
 
 const links = [
   ["Orders & refunds", "receipt-outline", "/orders"],
@@ -12,24 +12,117 @@ const links = [
 
 export default function ProfileScreen() {
   const router = useRouter();
+
   return (
     <Screen>
       <BrandHeader onNotifications={() => router.push("/notifications")} />
+
       <View style={styles.profile}>
-        <View style={styles.avatar}><Text style={styles.initials}>KM</Text></View>
-        <View style={{ flex: 1 }}><Text style={type.h2}>Ken Morgan</Text><Text style={styles.email}>ken@example.com</Text></View>
-        <Pressable onPress={() => router.push("/edit-profile")} style={styles.edit}><AppIcon name="pencil-outline" /></Pressable>
+        <View style={styles.avatar}>
+          <Text style={styles.initials}>KM</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={type.h2}>Ken Morgan</Text>
+          <Text style={styles.email}>ken@example.com</Text>
+        </View>
+        <Pressable
+          accessibilityLabel="Edit profile"
+          onPress={() => router.push("/edit-profile")}
+          style={styles.edit}
+        >
+          <AppIcon name="pencil-outline" size={17} />
+        </Pressable>
       </View>
-      <InfoBanner icon="heart-outline" title="Creativity stays local" body="Ticket and hire income supports independent venues and artists across Bristol." tone="pink" />
+
+      <InfoBanner
+        icon="heart-outline"
+        title="Creativity stays local"
+        body="Ticket and hire income supports independent venues and artists across Bristol."
+        tone="pink"
+      />
+
       <View style={styles.links}>
-        {links.map(([label, icon, href]) => <Pressable key={label} onPress={() => router.push(href)} style={styles.link}><View style={styles.linkLeft}><AppIcon name={icon} /><Text style={styles.linkText}>{label}</Text></View><AppIcon name="chevron-forward" /></Pressable>)}
+        {links.map(([label, icon, href]) => (
+          <Pressable
+            key={label}
+            onPress={() => router.push(href)}
+            style={styles.link}
+          >
+            <View style={styles.linkLeft}>
+              <AppIcon name={icon} size={18} color={colors.muted} />
+              <Text style={styles.linkText}>{label}</Text>
+            </View>
+            <AppIcon name="chevron-forward" size={16} color={colors.muted} />
+          </Pressable>
+        ))}
       </View>
-      <Pressable style={styles.organiser} onPress={() => router.push("/for-organisers")}><Text style={styles.organiserKicker}>FOR ORGANISERS</Text><Text style={type.h3}>Manage events or find a space</Text><Text style={styles.organiserBody}>Professional tools continue on the web.</Text><AppIcon name="arrow-forward" color={colors.pink} /></Pressable>
+
+      <Pressable
+        style={styles.organiser}
+        onPress={() => router.push("/for-organisers")}
+      >
+        <View style={{ flex: 1, gap: spacing.xs }}>
+          <Text style={styles.organiserKicker}>FOR ORGANISERS</Text>
+          <Text style={type.h3}>Manage events or find a space</Text>
+          <Text style={styles.organiserBody}>
+            Professional tools continue on the web.
+          </Text>
+        </View>
+        <AppIcon name="arrow-forward" size={19} color={colors.pink} />
+      </Pressable>
     </Screen>
   );
 }
+
 const styles = StyleSheet.create({
-  profile: { padding: 20, flexDirection: "row", alignItems: "center", gap: 14 }, avatar: { width: 62, height: 62, borderRadius: 31, alignItems: "center", justifyContent: "center", backgroundColor: colors.yellow, borderWidth: 2, borderColor: colors.ink }, initials: { fontSize: 20, fontWeight: "900" }, email: { color: colors.muted, marginTop: 4 }, edit: { width: 44, height: 44, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.ink },
-  links: { margin: 20, borderTopWidth: 2, borderColor: colors.ink }, link: { minHeight: 62, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderColor: colors.ink }, linkLeft: { flexDirection: "row", alignItems: "center", gap: 12 }, linkText: { fontSize: 16, fontWeight: "700" },
-  organiser: { margin: 20, padding: 18, gap: 5, backgroundColor: colors.yellow, borderWidth: 2, borderColor: colors.ink }, organiserKicker: { color: colors.pink, fontSize: 11, letterSpacing: 1, fontWeight: "900" }, organiserBody: { color: colors.muted, fontSize: 13, marginBottom: 8 },
+  profile: {
+    paddingHorizontal: spacing.gutter,
+    paddingVertical: spacing.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: radii.pill,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.yellow,
+  },
+  initials: { fontSize: 17, fontWeight: "600", letterSpacing: 0.3 },
+  email: { ...type.meta, color: colors.muted, marginTop: 2 },
+  edit: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    borderRadius: radii.xs,
+  },
+  links: { marginHorizontal: spacing.gutter, marginTop: spacing.section },
+  link: {
+    minHeight: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  linkLeft: { flexDirection: "row", alignItems: "center", gap: spacing.md - 2 },
+  linkText: { ...type.body, fontSize: 15 },
+  organiser: {
+    marginHorizontal: spacing.gutter,
+    marginTop: spacing.section,
+    paddingVertical: spacing.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  organiserKicker: { ...type.kicker, color: colors.pink },
+  organiserBody: { ...type.meta, color: colors.muted },
 });
