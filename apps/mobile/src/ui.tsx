@@ -18,6 +18,7 @@ export {
   SecondaryButton,
   Section,
   SectionTitle,
+  Stepper,
   Tag,
   TextField,
   type IconName,
